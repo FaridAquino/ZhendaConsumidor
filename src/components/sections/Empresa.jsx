@@ -1,6 +1,7 @@
 import { animate, onScroll, utils } from 'animejs';
 import { useAnimeScope } from '../../hooks/useAnimeScope.js';
 import { prefersReducedMotion } from '../../animations/motion.js';
+import { recurso } from '../../recursos.js';
 import './Empresa.css';
 
 /*
@@ -29,8 +30,8 @@ import './Empresa.css';
 const EMPRESA = {
   nombre: 'Danper',
   claim: 'Compromiso sostenible',
-  sello: '/images/Danper/LogoImagen.jpg',
-  foto: '/images/Danper/PersonasDanper.jpg',
+  sello: recurso('images/Danper/LogoImagen.jpg'),
+  foto: recurso('images/Danper/PersonasDanper.jpg'),
   fotoAlt:
     'Dos trabajadores de Danper con uniforme y gorra de la empresa en una línea de packing',
   pieFoto: 'Equipo de planta de Danper.',

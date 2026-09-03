@@ -1,0 +1,57 @@
+# Despliegue a GitHub Pages.
+#
+# `dist` esta en .gitignore a proposito: el sitio se construye aqui, no se
+# versiona. El artefacto que sube upload-pages-artifact es esa carpeta.
+name: Deploy a GitHub Pages
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# Un despliegue a la vez. Si llegan dos pushes seguidos, el primero se cancela:
+# lo que importa es que se publique el ultimo, no que se publiquen los dos.
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      # `npm ci` y no `npm install`: instala exactamente lo que dice
+      # package-lock.json y falla si el lock no cuadra con package.json, en vez
+      # de arreglarlo por su cuenta. En CI eso es lo que se quiere.
+      - run: npm ci
+
+      # Ejecuta tambien el script `postbuild`, que copia index.html a 404.html.
+      # Pages sirve ese 404.html ante cualquier ruta que no exista como archivo
+      # (/ZhendaConsumidor/lote/ZH-2026-0412, por ejemplo), la app arranca y el
+      # router resuelve. Es lo que hace que funcionen los enlaces directos.
+      - run: npm run build
+
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: dist
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.despliegue.outputs.page_url }}
+    steps:
+      - id: despliegue
+        uses: actions/deploy-pages@v4

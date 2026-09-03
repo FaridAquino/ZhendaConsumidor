@@ -2,6 +2,7 @@ import { animate, onScroll, utils } from 'animejs';
 import { crearSecuencia } from '../../animations/secuencia.js';
 import { useAnimeScope } from '../../hooks/useAnimeScope.js';
 import { prefersReducedMotion } from '../../animations/motion.js';
+import { recurso } from '../../recursos.js';
 import './Arandano.css';
 
 /*
@@ -23,7 +24,7 @@ import './Arandano.css';
    archivos: 2 -> 01.webp .. 64.webp, 3 -> 001.webp .. 120.webp. */
 const TOTAL_FRAMES = 64;
 const DIGITOS = 2;
-const ruta = (i) => `/images/arandano/${String(i + 1).padStart(DIGITOS, '0')}.webp`;
+const ruta = (i) => recurso(`images/arandano/${String(i + 1).padStart(DIGITOS, '0')}.webp`);
 
 /* El lote trae los nombres de sus certificaciones; que significa cada una es
    texto editorial, igual para todos los lotes, asi que vive aqui y no en los

@@ -1,5 +1,6 @@
 import { useAnimeScope } from '../../hooks/useAnimeScope.js';
 import { parallax, revealOnScroll } from '../../animations/scroll.js';
+import { recurso } from '../../recursos.js';
 import './Footer.css';
 
 /*
@@ -47,7 +48,7 @@ export default function Footer() {
           nombre de la marca esta escrito debajo, en texto de verdad. */}
       <img
         className="footer__marca-agua"
-        src="/images/logo.png"
+        src={recurso('images/logo.png')}
         alt=""
         aria-hidden="true"
         width="512"
@@ -61,7 +62,7 @@ export default function Footer() {
           <p className="footer__marca">
             <img
               className="footer__logo"
-              src="/images/logo.png"
+              src={recurso('images/logo.png')}
               alt=""
               width="36"
               height="36"

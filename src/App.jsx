@@ -7,7 +7,10 @@ import NotFound from './pages/NotFound.jsx';
 
 export default function App() {
   return (
-    <BrowserRouter>
+    /* basename: la app vive en un subdirectorio (ver `base` en
+       vite.config.js). Sin esto el router compararia la ruta completa
+       /ZhendaConsumidor/ contra "/" y siempre caeria en NotFound. */
+    <BrowserRouter basename={import.meta.env.BASE_URL}>
       <Header />
       <main id="contenido">
         <Routes>

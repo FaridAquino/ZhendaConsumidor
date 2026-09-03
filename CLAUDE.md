@@ -192,6 +192,51 @@ su cuenta: asi el dia que llegue la API solo cambia Home.
 Cuando exista la API real, se reemplaza `buscarLote()` por el cliente HTTP
 **manteniendo la forma de los objetos**; los componentes no deberían cambiar.
 
+## Despliegue
+
+El sitio se publica en **GitHub Pages**, en un subdirectorio:
+`https://faridaquino.github.io/ZhendaConsumidor/`. De ahi salen tres reglas.
+
+**1. `base` en `vite.config.js`** vale `/ZhendaConsumidor/`, sin condicionar al
+comando. Desarrollo sirve en esa misma ruta a proposito: asi un fallo de rutas
+se ve al momento y no al desplegar. `npm run dev` imprime la URL completa.
+
+**2. Ninguna ruta a `public/` se escribe a mano en JS.** Va siempre por
+`recurso()`, de `src/recursos.js`, y **sin barra inicial**:
+
+```js
+import { recurso } from '../../recursos.js';
+<img src={recurso('images/logo.png')} />
+```
+
+Por que importa: Vite reescribe `base` en el HTML y en la CSS, pero **no dentro
+de las cadenas de JavaScript**. Un `src="/images/x.png"` compila sin quejarse,
+la pagina carga y la imagen no esta. Falla en silencio, que es lo peor que
+puede hacer. Si anades una imagen y no aparece en produccion, mira esto
+primero.
+
+**3. `basename` en el router.** `<BrowserRouter basename={import.meta.env.BASE_URL}>`
+en `App.jsx`. Sin el, el router compara `/ZhendaConsumidor/` contra `/` y todo
+cae en NotFound.
+
+**No cambies a `HashRouter`**, aunque sea el consejo habitual para Pages: con
+hash, la location del router sale del `#`, y `useSearchParams` dejaria de leer
+`?clamshell=...`. Eso es la entrada del QR, o sea el caso principal de la
+pagina. En su lugar, el script `postbuild` copia `index.html` a `404.html`:
+Pages sirve ese archivo ante cualquier ruta que no exista, la app arranca y el
+router resuelve. Es lo que hace que funcione un enlace directo a
+`/lote/:codigo`.
+
+El gestor de paquetes es **npm** (`package-lock.json`). El workflow esta en
+`.github/workflows/pages.yml` y usa `npm ci`. En Settings -> Pages, el origen
+tiene que ser **GitHub Actions**, no una rama.
+
+Comprobacion antes de desplegar, que reproduce la subcarpeta:
+
+```bash
+npm run build && npm run preview   # sirve en /ZhendaConsumidor/
+```
+
 ## Idioma
 
 - Interfaz, nombres de variables, funciones, clases CSS y comentarios: **español**.
