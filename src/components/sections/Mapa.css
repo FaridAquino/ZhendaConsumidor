@@ -1,0 +1,171 @@
+/* Altura de la seccion = cuanto scroll dura el zoom. Subela para que el
+   enfoque sea mas lento; bajala para que sea mas seco. */
+.mapa {
+  --recorrido: 280vh;
+  position: relative;
+  padding-block: 0;
+  height: var(--recorrido);
+}
+
+/* Se queda anclado mientras la seccion pasa: el scroll mueve el mapa,
+   no el bloque. Requiere que ningun ancestro tenga overflow != visible
+   (por eso base.css usa `overflow-x: clip` y no `hidden`). */
+/* Alto en `svh`, no en `dvh`. En movil `dvh` cambia cuando el navegador
+   pliega su barra de direcciones: el panel anclado se redimensiona en mitad
+   del scroll, se recalcula el layout y el scrub da un salto. `svh` es el
+   viewport con la barra desplegada, asi que es un numero estable durante
+   todo el recorrido. */
+.mapa__viewport {
+  position: sticky;
+  top: 0;
+  height: 100svh;
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+  contain: paint;
+}
+
+.mapa__svg {
+  width: 100%;
+  height: 100%;
+  max-height: 100svh;
+}
+
+/* El origen debe ser la esquina del viewBox: el calculo del enfoque asume
+   que un punto p acaba en escala * p + desplazamiento. */
+.mapa__grupo {
+  transform-box: view-box;
+  transform-origin: 0 0;
+}
+
+.mapa__region {
+  fill: var(--c-berry-100);
+  stroke: var(--surface);
+  stroke-width: 1;
+  /* El trazo no engorda al hacer zoom. */
+  vector-effect: non-scaling-stroke;
+  transition: fill var(--dur-slow) var(--ease-out);
+}
+
+.mapa__region--foco {
+  fill: var(--c-berry-300);
+}
+
+.mapa--destacado .mapa__region--foco {
+  fill: var(--c-berry-700);
+}
+
+/* Ficha de texto: entra cuando el zoom ya casi ha llegado. */
+.mapa__ficha {
+  /* Capa propia en el compositor: el panel flota sobre contenido que repinta
+     en cada frame, y sin esto su sombra y su borde se re-rasterizan con cada
+     repintado de lo que hay debajo. */
+  will-change: transform, opacity;
+  position: absolute;
+  left: var(--space-8);
+  bottom: var(--space-12);
+  width: min(100% - var(--space-8) * 2, 30rem);
+  padding: var(--space-6);
+  border-radius: var(--radius-lg);
+  /* Sin backdrop-filter: el mapa que hay detras se transforma en cada frame
+     del scrub y el desenfoque habria que recalcularlo entero cada vez. */
+  background: color-mix(in srgb, var(--c-paper) 94%, transparent);
+  border: 1px solid var(--c-line);
+  box-shadow: var(--shadow-md);
+
+  opacity: 0;
+  translate: 0 var(--space-6);
+  transition:
+    opacity var(--dur-slow) var(--ease-out),
+    translate var(--dur-slow) var(--ease-out);
+}
+
+.mapa--con-ficha .mapa__ficha {
+  opacity: 1;
+  translate: 0 0;
+}
+
+.mapa__titulo {
+  margin-bottom: var(--space-3);
+}
+
+.mapa__lead {
+  color: var(--text-soft);
+  margin-bottom: var(--space-6);
+}
+
+.mapa__datos {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-6);
+}
+
+.mapa__dato {
+  display: flex;
+  flex-direction: column;
+}
+
+.mapa__dato-valor {
+  font-size: var(--fs-lg);
+  color: var(--c-berry-800);
+}
+
+.mapa__dato-detalle {
+  font-size: var(--fs-xs);
+  color: var(--text-soft);
+}
+
+/* --- Movil -------------------------------------------------------------
+   La ficha pasa de tarjeta flotante a hoja inferior: ancho completo, anclada
+   sobre la barra del riel. Y se le pone tope de alto porque el texto de Ica
+   mas los tres datos ocupan, sin recortar, mas de media pantalla de movil y
+   dejarian el mapa sin verse. */
+@media (max-width: 860px) {
+  .mapa__ficha {
+    left: var(--space-3);
+    right: var(--space-3);
+    bottom: calc(var(--barra-alto) + var(--space-3));
+    width: auto;
+    padding: var(--space-4);
+    /* SIN overflow-y: auto, a proposito. Un contenedor con scroll propio
+       dentro de una seccion anclada se traga el gesto tactil: el dedo mueve
+       el texto de la ficha en vez de la pagina, y como es el scroll de la
+       pagina el que mueve el zoom, la animacion se queda congelada. Si el
+       contenido no cabe, se recorta contenido (ver la query de 420px), no se
+       anade un scroll. */
+  }
+
+  .mapa__lead {
+    font-size: var(--fs-sm);
+    margin-bottom: var(--space-4);
+  }
+
+  .mapa__datos {
+    gap: var(--space-4);
+  }
+
+  .mapa__dato-valor {
+    font-size: var(--fs-md);
+  }
+}
+
+/* Moviles estrechos: los tres datos en fila no caben, van en columna
+   compacta y el lead se recorta a lo esencial visualmente. */
+@media (max-width: 420px) {
+  .mapa {
+    --recorrido: 220vh;
+  }
+
+  /* El parrafo es lo primero que sobra: el titulo y los tres datos ya
+     cuentan la historia, y asi la ficha no se come el mapa. */
+  .mapa__lead {
+    display: none;
+  }
+
+  .mapa__datos {
+    gap: var(--space-3);
+  }
+}

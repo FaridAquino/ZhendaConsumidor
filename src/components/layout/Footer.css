@@ -1,0 +1,123 @@
+/* Pie general. Es lo unico oscuro de la pagina: despues de un recorrido entero
+   sobre papel claro, el corte de color dice "aqui se acaba" sin necesidad de
+   una linea ni de un hueco en blanco. Por eso no lleva margin-top. */
+.footer {
+  position: relative;
+  /* La marca de agua se sale por la esquina y aqui se recorta. */
+  overflow: hidden;
+
+  background: var(--c-berry-900);
+  color: var(--c-berry-100);
+  padding-block: var(--space-16);
+  /* El pie vive fuera de #contenido, que es quien reserva el hueco del riel.
+     Aqui hay que reservarlo otra vez o el texto queda debajo de la columna
+     fija. En movil --riel-hueco vale 0 solo: sin media query. */
+  padding-inline-start: var(--riel-hueco);
+  /* Y como es lo ultimo de la pagina, es el que le deja sitio a la barra
+     inferior del movil (en escritorio --barra-alto vale 0). */
+  padding-bottom: calc(var(--space-16) + var(--barra-alto));
+}
+
+/* Marca de agua: el logotipo, grande y casi apagado. Decorativa del todo, asi
+   que no recibe puntero ni seleccion. anime.js le escribe la deriva en
+   `transform`; la posicion la ponen `inset-*`, que no se pisan con el. */
+.footer__marca-agua {
+  position: absolute;
+  right: calc(var(--space-12) * -1);
+  bottom: calc(var(--space-16) * -1);
+  width: clamp(14rem, 32vw, 26rem);
+  height: auto;
+  opacity: 0.09;
+  pointer-events: none;
+  user-select: none;
+}
+
+.footer__inner {
+  /* Relativo para que el contenido quede por encima de la marca de agua sin
+     tener que inventarse un z-index en la marca. */
+  position: relative;
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-12) var(--space-16);
+  justify-content: space-between;
+  align-items: start;
+}
+
+.footer__bloque {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.footer__bloque--legal {
+  /* Se lleva el sobrante del ancho, pero sin pasar de una medida legible. */
+  flex: 1 1 24rem;
+  max-width: 38rem;
+  gap: var(--space-2);
+}
+
+.footer__marca {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  margin: 0;
+}
+
+.footer__logo {
+  width: clamp(1.75rem, 4vw, 2.25rem);
+  height: auto;
+}
+
+.footer__nombre {
+  font-family: var(--font-display);
+  font-size: var(--fs-lg);
+  font-weight: 700;
+  letter-spacing: -0.01em;
+}
+
+/* La frase de cierre: es lo unico del pie que se lee como texto, no como letra
+   pequena, y por eso es lo unico que va en grande. */
+.footer__frase {
+  margin: 0;
+  max-width: 22ch;
+  font-family: var(--font-display);
+  font-size: var(--fs-lg);
+  line-height: 1.25;
+  letter-spacing: -0.01em;
+  text-wrap: balance;
+}
+
+.footer__nota {
+  margin: 0;
+  max-width: none;
+  font-size: var(--fs-sm);
+}
+
+.footer__nota--tenue {
+  font-size: var(--fs-xs);
+  opacity: 0.6;
+}
+
+/* --- Movil -------------------------------------------------------------
+   Una columna: primero la marca y la frase, despues la letra pequena. Es el
+   mismo orden que en escritorio, solo que apilado. */
+@media (max-width: 860px) {
+  .footer {
+    padding-block: var(--space-12);
+    padding-bottom: calc(var(--space-12) + var(--barra-alto));
+  }
+
+  .footer__inner {
+    gap: var(--space-8);
+  }
+
+  .footer__bloque--legal {
+    flex-basis: 100%;
+  }
+
+  /* Mas apagada todavia: en una columna estrecha se cruza con el texto. */
+  .footer__marca-agua {
+    right: calc(var(--space-8) * -1);
+    opacity: 0.06;
+  }
+}

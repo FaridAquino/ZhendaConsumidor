@@ -1,0 +1,145 @@
+.lote__cabecera {
+  background: linear-gradient(180deg, var(--c-berry-100), transparent);
+  padding-top: var(--space-16);
+}
+
+.ficha {
+  display: grid;
+  gap: var(--space-6);
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  margin: var(--space-12) 0 0;
+  padding: var(--space-6) 0 0;
+  border-top: 1px solid var(--c-line);
+}
+
+.ficha__dato dt {
+  font-size: var(--fs-xs);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--c-berry-500);
+  margin-bottom: var(--space-1);
+}
+
+.ficha__dato dd {
+  margin: 0;
+  font-weight: 600;
+}
+
+.recorrido__pista {
+  position: relative;
+  padding-left: var(--space-12);
+  margin-top: var(--space-8);
+}
+
+.recorrido__riel {
+  position: absolute;
+  left: var(--space-4);
+  top: 0;
+  bottom: 0;
+  width: 3px;
+  border-radius: var(--radius-pill);
+  background: var(--c-line);
+  overflow: hidden;
+}
+
+.recorrido__progreso {
+  display: block;
+  width: 100%;
+  height: 100%;
+  transform-origin: top center;
+  transform: scaleY(0);
+  background: linear-gradient(180deg, var(--c-berry-500), var(--c-leaf-400));
+}
+
+.recorrido__lista {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: var(--space-8);
+}
+
+.evento {
+  position: relative;
+  background: var(--c-paper);
+  border: 1px solid var(--c-line);
+  border-radius: var(--radius-lg);
+  padding: var(--space-6);
+  box-shadow: var(--shadow-sm);
+}
+
+.evento::before {
+  content: "";
+  position: absolute;
+  left: calc(var(--space-12) * -1 + 10px);
+  top: var(--space-8);
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: var(--c-paper);
+  border: 3px solid var(--c-berry-500);
+}
+
+.evento__meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-3);
+  margin-bottom: var(--space-3);
+  font-size: var(--fs-xs);
+  color: var(--text-soft);
+}
+
+.evento__estado {
+  padding: var(--space-1) var(--space-3);
+  border-radius: var(--radius-pill);
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  background: var(--c-berry-100);
+  color: var(--c-berry-800);
+}
+
+.evento__estado--ok {
+  background: color-mix(in srgb, var(--c-ok) 16%, transparent);
+  color: var(--c-ok);
+}
+
+.evento__estado--warn {
+  background: color-mix(in srgb, var(--c-warn) 18%, transparent);
+  color: var(--c-warn);
+}
+
+.evento__estado--alert {
+  background: color-mix(in srgb, var(--c-alert) 16%, transparent);
+  color: var(--c-alert);
+}
+
+.evento h3 {
+  margin-bottom: var(--space-2);
+  font-size: var(--fs-lg);
+}
+
+.evento p {
+  margin: 0;
+  color: var(--text-soft);
+  font-size: var(--fs-sm);
+}
+
+.evento__pie {
+  margin-top: var(--space-3) !important;
+  font-size: var(--fs-xs) !important;
+  color: var(--text-soft);
+}
+
+@media (max-width: 640px) {
+  .recorrido__pista {
+    padding-left: var(--space-8);
+  }
+  .recorrido__riel {
+    left: var(--space-2);
+  }
+  .evento::before {
+    left: calc(var(--space-8) * -1 + 4px);
+  }
+}

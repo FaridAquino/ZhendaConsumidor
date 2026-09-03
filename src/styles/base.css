@@ -1,0 +1,167 @@
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  min-height: 100dvh;
+  background: var(--surface);
+  color: var(--text);
+  font-family: var(--font-sans);
+  font-size: var(--fs-md);
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  /* Las secciones animadas se desbordan a proposito durante el scroll.
+     `clip` y no `hidden`: `hidden` convierte al body en contenedor de scroll
+     y rompe el `position: sticky` de las secciones ancladas. */
+  overflow-x: clip;
+}
+
+h1,
+h2,
+h3 {
+  font-family: var(--font-display);
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+  margin: 0 0 var(--space-4);
+}
+
+h1 {
+  font-size: var(--fs-2xl);
+}
+h2 {
+  font-size: var(--fs-xl);
+}
+
+p {
+  margin: 0 0 var(--space-4);
+  max-width: 62ch;
+}
+
+a {
+  color: var(--c-berry-700);
+  text-decoration-thickness: 1px;
+  text-underline-offset: 3px;
+}
+
+img,
+svg {
+  max-width: 100%;
+  display: block;
+}
+
+button {
+  font: inherit;
+  cursor: pointer;
+}
+
+.container {
+  width: min(100% - 2.5rem, var(--content-width));
+  margin-inline: auto;
+}
+
+/* El aire vertical escala con el ancho: 6rem fijos son elegantes en un
+   portatil y absurdos en un movil de 390px, donde se comen media pantalla
+   antes de que empiece el contenido. */
+.section {
+  padding-block: clamp(var(--space-12), 9vw, var(--space-24));
+}
+
+.eyebrow {
+  font-size: var(--fs-xs);
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--c-berry-500);
+  margin-bottom: var(--space-3);
+}
+
+.lead {
+  font-size: var(--fs-lg);
+  color: var(--text-soft);
+}
+
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+/* Estado inicial de todo elemento que sera revelado por anime.js.
+   Se aplica solo si JS esta activo (la clase la pone main.jsx),
+   asi el contenido sigue siendo visible sin JS. */
+.js .reveal {
+  opacity: 0;
+  will-change: transform, opacity;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  .js .reveal {
+    opacity: 1;
+  }
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* El riel lateral es `fixed`: no ocupa sitio en el flujo, asi que el hueco
+   se reserva aqui. Sin esto, el riel taparia el texto en pantallas medianas.
+   Fondo transparente: el color lo pone el body, de modo que las secciones no
+   dibujan cajas ni dejan costuras visibles entre una y otra. */
+#contenido {
+  padding-inline-start: var(--riel-hueco);
+  background: transparent;
+}
+
+/* El sitio que necesita la barra inferior del movil lo reserva el pie, no
+   #contenido. Antes lo reservaba aqui, y como el pie va DESPUES de #contenido
+   el hueco no protegia nada: solo abria una franja en blanco entre la ultima
+   seccion y el pie. Ver .footer en Footer.css. */
+
+/* Secciones a sangre: recuperan el hueco del riel y ocupan todo el ancho de
+   la ventana. El riel sigue flotando encima porque es `fixed` con z-index 50. */
+.sangrado {
+  margin-inline-start: calc(var(--riel-hueco) * -1);
+  width: calc(100% + var(--riel-hueco));
+}
+
+/* --- Movil ------------------------------------------------------------
+   Por debajo de 860px el riel deja de ser columna y pasa a ser barra
+   inferior (ver Header.css). Eso invierte los dos huecos: desaparece el de
+   la izquierda y aparece el de abajo. */
+@media (max-width: 860px) {
+  :root {
+    --riel-hueco: 0px;
+    /* Icono + etiqueta + padding de la burbuja. Si cambia el alto de la
+       barra hay que cambiarlo aqui: es lo que separa las fichas del suelo. */
+    --barra-alto: 5.75rem;
+  }
+
+  .container {
+    width: min(100% - var(--space-8), var(--content-width));
+  }
+}
+
+/* Moviles estrechos: el titulo grande a 6vw se queda en nada, y los huecos
+   entre bloques de la ficha del mapa sobran. */
+@media (max-width: 420px) {
+  :root {
+    --fs-2xl: clamp(2rem, 9vw, 2.6rem);
+    --fs-xl: clamp(1.4rem, 6vw, 1.8rem);
+  }
+}

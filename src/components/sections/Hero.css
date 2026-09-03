@@ -1,0 +1,268 @@
+.hero {
+  position: relative;
+  /* `svh` para que la portada no cambie de alto cuando el navegador movil
+     pliega su barra: si no, el contenido centrado da un brinco al empezar
+     a hacer scroll. */
+  min-height: 92svh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding-block: clamp(var(--space-12), 9vw, var(--space-24))
+    clamp(var(--space-8), 6vw, var(--space-16));
+  overflow: hidden;
+  isolation: isolate;
+}
+
+.hero__fondo {
+  position: absolute;
+  inset: -20% -10%;
+  z-index: -1;
+}
+
+.hero__blob {
+  position: absolute;
+  top: 4%;
+  right: 6%;
+  width: min(46vw, 520px);
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background: radial-gradient(circle at 32% 28%, var(--c-berry-300), var(--c-berry-700) 62%, var(--c-berry-900));
+  filter: blur(2px);
+  opacity: 0.85;
+}
+
+.hero__blob--secundario {
+  top: auto;
+  bottom: 2%;
+  right: auto;
+  left: -6%;
+  width: min(34vw, 380px);
+  background: radial-gradient(circle at 40% 35%, var(--c-leaf-200), var(--c-leaf-600));
+  opacity: 0.5;
+  filter: blur(18px);
+}
+
+.hero__contenido {
+  position: relative;
+}
+
+/* --- Marca ------------------------------------------------------------ */
+.hero__marca {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  margin-bottom: var(--space-8);
+}
+
+.hero__logo {
+  width: clamp(2.25rem, 5vw, 3rem);
+  height: auto;
+}
+
+.hero__nombre {
+  font-family: var(--font-display);
+  font-size: var(--fs-lg);
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--c-berry-800);
+}
+
+.hero__titulo {
+  max-width: 16ch;
+  /* text.split() envuelve cada caracter en un span inline-block. */
+  --char-display: inline-block;
+}
+
+.hero__titulo .char {
+  display: inline-block;
+  will-change: transform, opacity;
+}
+
+/* --- Ficha de identidad: clamshell y lote ----------------------------- */
+.hero__identidad {
+  width: fit-content;
+  /* Con el recolector y las certificaciones dentro, `fit-content` se iria a
+     por toda la linea. El tope lo pone el texto mas largo, no la ventana. */
+  max-width: min(100%, 34rem);
+  margin-top: var(--space-8);
+  padding: var(--space-6);
+  border: 1px solid var(--c-line);
+  border-radius: var(--radius-lg);
+  /* Translucida sobre los blobs: la ficha se apoya en el fondo en vez de
+     taparlo con un rectangulo opaco. */
+  background: color-mix(in srgb, var(--c-paper) 78%, transparent);
+  box-shadow: var(--shadow-md);
+  backdrop-filter: blur(8px);
+}
+
+.hero__datos {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-6) var(--space-8);
+  margin: 0;
+}
+
+.hero__dato {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+
+.hero__dato-etiqueta {
+  font-size: var(--fs-xs);
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--c-berry-500);
+}
+
+.hero__dato-valor {
+  /* <dd> trae sangria por defecto en todos los navegadores. */
+  margin: 0;
+  font-family: var(--font-mono);
+  /* Los digitos comparten ancho: el codigo no se descuadra al animarse
+     ni al cambiar de lote. */
+  font-variant-numeric: tabular-nums;
+  font-size: var(--fs-lg);
+  letter-spacing: 0.04em;
+  color: var(--c-berry-800);
+}
+
+/* El clamshell manda: es el numero que la persona tiene delante. */
+.hero__dato--principal .hero__dato-valor {
+  font-size: var(--fs-xl);
+  font-weight: 600;
+  color: var(--c-berry-900);
+}
+
+.hero__dato-unidad {
+  margin-left: var(--space-1);
+  font-size: var(--fs-sm);
+  font-weight: 600;
+  color: var(--c-berry-500);
+}
+
+/* --- Quien lo recolecto ----------------------------------------------- */
+.hero__recolector {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  max-width: none;
+  /* Separado del resto por una linea: el dato deja de ser un codigo y pasa
+     a ser una persona, y el cambio de registro se nota mejor con un corte. */
+  margin: var(--space-6) 0 0;
+  padding-top: var(--space-6);
+  border-top: 1px solid var(--c-line);
+}
+
+.hero__recolector-icono {
+  flex: none;
+  color: var(--c-leaf-600);
+}
+
+.hero__recolector-texto {
+  display: flex;
+  flex-direction: column;
+}
+
+.hero__recolector-nombre {
+  font-size: var(--fs-sm);
+  color: var(--c-berry-800);
+}
+
+.hero__recolector-detalle {
+  font-size: var(--fs-xs);
+  color: var(--text-soft);
+}
+
+/* --- Certificaciones --------------------------------------------------- */
+.hero__certs {
+  list-style: none;
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  margin: var(--space-4) 0 0;
+  padding: 0;
+}
+
+.hero__cert {
+  padding: var(--space-1) var(--space-3);
+  border: 1px solid var(--c-berry-300);
+  border-radius: var(--radius-pill);
+  font-size: var(--fs-xs);
+  font-weight: 600;
+  color: var(--c-berry-700);
+  background: color-mix(in srgb, var(--c-berry-100) 45%, transparent);
+}
+
+.hero__dato-nota {
+  max-width: none;
+  margin: var(--space-4) 0 0;
+  font-size: var(--fs-xs);
+  color: var(--text-soft);
+}
+
+.hero__acciones {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+  margin-top: var(--space-8);
+}
+
+.boton {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-3) var(--space-6);
+  border: 1px solid transparent;
+  border-radius: var(--radius-pill);
+  font-weight: 600;
+  font-size: var(--fs-sm);
+  text-decoration: none;
+  transition:
+    transform var(--dur-fast) var(--ease-out),
+    background var(--dur-fast) var(--ease-out),
+    box-shadow var(--dur-fast) var(--ease-out);
+}
+
+.boton:hover {
+  transform: translateY(-2px);
+}
+
+.boton--primario {
+  background: var(--c-berry-700);
+  color: var(--c-paper);
+  box-shadow: var(--shadow-md);
+}
+
+.boton--primario:hover {
+  background: var(--c-berry-800);
+}
+
+.boton--fantasma {
+  border-color: var(--c-line);
+  color: var(--c-berry-800);
+  background: color-mix(in srgb, var(--c-paper) 70%, transparent);
+}
+
+.hero__scroll {
+  position: relative;
+  margin-top: clamp(var(--space-8), 6vw, var(--space-16));
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  width: min(100% - 2.5rem, var(--content-width));
+  margin-inline: auto;
+  font-size: var(--fs-xs);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--text-soft);
+}
+
+.hero__scroll-linea {
+  flex: 1;
+  max-width: 140px;
+  height: 1px;
+  background: linear-gradient(90deg, var(--c-berry-500), transparent);
+}

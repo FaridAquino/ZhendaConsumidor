@@ -1,0 +1,305 @@
+/* Cierre del recorrido. Mismo esqueleto que #recoleccion y #quimicos: la
+   seccion mide varias pantallas y dentro un viewport `sticky` hace de escenario
+   mientras el scroll marca el progreso.
+
+   El recorrido es mas corto que el de las otras dos (220vh frente a 300vh):
+   aqui no hay 64 fotogramas que repartir, solo una foto asentandose y un
+   recuadro entrando por partes. Estirarlo mas dejaria la escena quieta. */
+.empresa {
+  --recorrido: 220vh;
+  position: relative;
+  height: var(--recorrido);
+}
+
+/* `svh` y no `dvh`: ver la nota equivalente en Mapa.css. */
+.empresa__viewport {
+  position: sticky;
+  top: 0;
+  height: 100svh;
+  overflow: hidden;
+  contain: paint;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-8);
+  /* La seccion va a sangre y el riel lateral flota encima, por la izquierda.
+     Sin este hueco la escena se centra en la ventana entera y en pantallas
+     medianas (860-1100px) el recuadro acaba debajo del riel. --riel-hueco es
+     justo el sitio que ocupa, y en movil vale 0 solo, asi que esto no necesita
+     media query. */
+  padding-inline-start: max(var(--space-8), var(--riel-hueco));
+}
+
+/* Caja comun de foto y recuadro.
+
+   Dos columnas y no un recuadro flotando DENTRO de la foto, que fue el primer
+   intento: las dos personas ocupan la franja central de la imagen y cualquier
+   tarjeta apoyada encima les tapaba la cara. Aqui el recuadro vive en su
+   propia columna y solo muerde el borde izquierdo de la foto, que es donde
+   estan las cajas. Sigue siendo una tarjeta superpuesta; lo que cambia es
+   sobre que se superpone.
+
+   `width: fit-content` es lo que hace que la escena mida exactamente lo que
+   miden sus dos columnas, de modo que el viewport pueda centrarla sin dejar
+   aire muerto a un lado. */
+.empresa__escena {
+  display: grid;
+  grid-template-columns: 20rem auto;
+  align-items: center;
+  width: fit-content;
+  max-width: 100%;
+}
+
+/* Proporcion 4/3 a proposito: el original es 628x488 (casi 4/3), asi que
+   `cover` apenas recorta. Con un marco mas apaisado habria que sacar franjas
+   de arriba y abajo, que es justo donde estan las cabezas.
+
+   --sobrante es el alto de mas que tiene la foto para poder derivar. Debe ser
+   MAYOR que 2 x CIERRE.deriva (Empresa.jsx) o en un extremo del recorrido el
+   marco enseña su propio fondo. */
+.empresa__marco {
+  --sobrante: 64px;
+
+  grid-area: 1 / 2;
+  position: relative;
+  margin: 0;
+  /* El alto manda y el ancho sale de la proporcion, no al reves. Con
+     `max-height` sobre un ancho estirado el navegador respetaba el tope pero
+     dejaba el marco mas ancho de lo que pedia la proporcion, y ahi la escena
+     ya no medaba lo que la foto. Fijando el alto, la escena se ajusta sola. */
+  height: min(74svh, 34rem);
+  aspect-ratio: 4 / 3;
+  width: auto;
+  /* Red de seguridad: si algun dia la aritmetica del corte de arriba se queda
+     corta, el marco se estrecha en vez de sacar la pagina de madre. Se recorta
+     mas la foto, que es reversible; un scroll horizontal no lo es. */
+  max-width: 100%;
+  min-width: 0;
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  background: var(--surface-alt);
+  box-shadow: var(--shadow-lg);
+}
+
+.empresa__foto {
+  position: absolute;
+  inset: calc(var(--sobrante) / -2) 0;
+  width: 100%;
+  height: calc(100% + var(--sobrante));
+  object-fit: cover;
+  /* Capa propia: es lo unico que se mueve en cada frame del scrub. */
+  will-change: transform;
+}
+
+/* El sello se apoya en la esquina opuesta al recuadro. Entra con `opacity` y
+   `scale`, las propiedades independientes: `transform` es de anime.js, que
+   escribe ahi el giro. Si esto usara transform, una de las dos ganaria. */
+.empresa__sello {
+  position: absolute;
+  top: var(--space-6);
+  right: var(--space-6);
+  width: clamp(4rem, 8vw, 5.5rem);
+  height: auto;
+  /* El jpg es cuadrado con las esquinas en blanco y el circulo rojo inscrito:
+     recortarlo al 50% deja justo la marca. */
+  border-radius: 50%;
+  box-shadow:
+    0 0 0 4px var(--surface),
+    var(--shadow-md);
+
+  opacity: 0;
+  scale: 0.86;
+  transition:
+    opacity var(--dur-base) var(--ease-out),
+    scale var(--dur-base) var(--ease-out);
+}
+
+.empresa--con-sello .empresa__sello {
+  opacity: 1;
+  scale: 1;
+}
+
+/* --- El recuadro -------------------------------------------------------
+   Mismo papel y mismo aspecto que .mapa__ficha y .arandano__panel. */
+.empresa__panel {
+  /* Capa propia en el compositor: flota sobre una foto que se transforma en
+     cada frame, y sin esto su sombra y su borde se re-rasterizan con ella. */
+  will-change: transform, opacity;
+  /* Misma celda que el marco para poder solaparlo, pero anclado a la columna
+     de la izquierda: el ancho del panel (26rem) supera el de su columna
+     (20rem), y esos 6rem de mas son justo lo que se apoya sobre la foto. */
+  grid-area: 1 / 1 / 2 / 3;
+  justify-self: start;
+  z-index: 1;
+  width: 26rem;
+  padding: var(--space-6);
+  border-radius: var(--radius-lg);
+  /* Sin backdrop-filter: detras hay una imagen que se escala en cada frame del
+     scrub y el desenfoque habria que rehacerlo entero cada vez. Un fondo casi
+     opaco da el mismo aire y no cuesta nada. */
+  background: color-mix(in srgb, var(--c-paper) 94%, transparent);
+  border: 1px solid var(--c-line);
+  box-shadow: var(--shadow-md);
+
+  opacity: 0;
+  translate: 0 var(--space-6);
+  transition:
+    opacity var(--dur-base) var(--ease-out),
+    translate var(--dur-base) var(--ease-out);
+}
+
+.empresa--con-panel .empresa__panel {
+  opacity: 1;
+  translate: 0 0;
+}
+
+.empresa__titulo {
+  margin-bottom: var(--space-3);
+  color: var(--c-berry-900);
+}
+
+.empresa__lead {
+  margin-bottom: var(--space-6);
+}
+
+.empresa__datos {
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+/* Cada dato en su propio recuadro. Entra por separado, con el mismo contrato
+   que los sellos y los fitosanitarios de #quimicos: la clase la pone el JS al
+   cruzar su umbral y la transicion la hace el CSS. */
+.empresa__dato {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--space-3);
+  padding: var(--space-2) var(--space-3);
+  border: 1px solid var(--c-line);
+  border-radius: var(--radius-md);
+  background: color-mix(in srgb, var(--surface-alt) 65%, transparent);
+
+  opacity: 0;
+  translate: 0 var(--space-3);
+  transition:
+    opacity var(--dur-base) var(--ease-out),
+    translate var(--dur-base) var(--ease-out);
+}
+
+.empresa__dato--visible {
+  opacity: 1;
+  translate: 0 0;
+}
+
+.empresa__dato-etiqueta {
+  flex: none;
+  font-size: var(--fs-xs);
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--c-berry-500);
+}
+
+.empresa__dato-valor {
+  margin: 0;
+  text-align: end;
+  font-size: var(--fs-sm);
+  color: var(--c-berry-800);
+}
+
+/* Un identificador se lee mejor con cifras de ancho fijo, igual que en la
+   portada. */
+.empresa__dato-valor--codigo {
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+}
+
+.empresa__pie {
+  margin: var(--space-6) 0 0;
+  font-size: var(--fs-xs);
+  color: var(--text-soft);
+}
+
+.empresa__claim {
+  color: var(--c-berry-500);
+  font-weight: 600;
+}
+
+/* --- Movil -------------------------------------------------------------
+   El recuadro deja de flotar y se pone debajo de la foto, igual que en
+   #quimicos. `min-height: 0` en el marco es lo que sostiene el reparto: el
+   viewport recorta, y sin ese suelo quitado el que se sale por abajo seria el
+   texto. Con el, cede la imagen. */
+@media (max-width: 1279px) {
+  .empresa__viewport {
+    flex-direction: column;
+    justify-content: center;
+    gap: var(--space-4);
+    padding: var(--space-4);
+    padding-bottom: calc(var(--barra-alto) + var(--space-3));
+  }
+
+  /* Deja de ser reticula: la foto arriba y el recuadro debajo.
+
+     El corte esta en 1279 y no en los 860 del resto del sitio porque aqui no
+     lo decide el movil, lo decide la aritmetica: 200px de riel + 32 de aire +
+     1045 de escena (20rem de columna + 725 de foto) = 1277. Por debajo de eso
+     las dos columnas no caben y el recuadro se saldria por la izquierda,
+     justo encima del riel. */
+  .empresa__escena {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-4);
+    width: 100%;
+    /* Que la columna interior pueda encogerse tambien. */
+    min-height: 0;
+  }
+
+  .empresa__marco {
+    height: auto;
+    width: 100%;
+    max-height: 40svh;
+    min-height: 0;
+  }
+
+  .empresa__panel {
+    width: auto;
+    padding: var(--space-4);
+    /* Ya no flota sobre nada que se transforme: sin capa propia. */
+    will-change: auto;
+    /* Contrapartida del min-height: 0 del marco. Si esto se pone a 1, el texto
+       vuelve a recortarse. */
+    flex-shrink: 0;
+  }
+
+  .empresa__sello {
+    top: var(--space-3);
+    right: var(--space-3);
+  }
+
+  .empresa__lead {
+    margin-bottom: var(--space-4);
+  }
+
+  .empresa__pie {
+    margin-top: var(--space-4);
+  }
+}
+
+/* Moviles estrechos: el recorrido se acorta (220vh son casi tres pantallas
+   sobre la misma foto) y el pie sobra: el recuadro ya dice lo esencial. */
+@media (max-width: 420px) {
+  .empresa {
+    --recorrido: 180vh;
+  }
+
+  .empresa__lead,
+  .empresa__pie {
+    display: none;
+  }
+}

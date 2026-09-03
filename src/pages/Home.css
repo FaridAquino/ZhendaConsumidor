@@ -1,0 +1,23 @@
+.busqueda__inner {
+  max-width: 46rem;
+}
+
+.busqueda {
+  padding-bottom: var(--space-24);
+}
+
+/* El buscador todavia es un andamio: BuscadorLote devuelve un <form> sin hijos.
+   Mientras siga asi, la seccion no aporta contenido, solo su padding: un hueco
+   en blanco al final de la pagina, justo debajo del cierre de Danper.
+
+   No se borra la seccion porque #buscar es el destino del boton "Rastrear otro
+   lote" de la portada. Se colapsa.
+
+   `:empty` deja de casar en cuanto el <form> tenga un solo hijo, asi que el
+   aire vuelve solo el dia que se escriba el buscador: no hay que acordarse de
+   venir a quitar esta regla. Y gana sin depender del orden, porque `:has()`
+   toma la especificidad de su argumento y esta es mas especifica que la de
+   arriba. */
+.busqueda:has(.buscador:empty) {
+  padding-block: 0;
+}

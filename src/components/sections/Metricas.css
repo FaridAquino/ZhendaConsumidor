@@ -1,0 +1,26 @@
+.metricas__grid {
+  display: grid;
+  gap: var(--space-8);
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+}
+
+.metrica {
+  padding: var(--space-6) 0;
+  border-top: 2px solid var(--c-berry-500);
+}
+
+.metrica__valor {
+  margin: 0 0 var(--space-2);
+  font-size: clamp(2.2rem, 5vw, 3.4rem);
+  font-weight: 700;
+  letter-spacing: -0.03em;
+  color: var(--c-berry-800);
+  font-variant-numeric: tabular-nums;
+}
+
+.metrica__etiqueta {
+  margin: 0;
+  color: var(--text-soft);
+  font-size: var(--fs-sm);
+  max-width: 24ch;
+}

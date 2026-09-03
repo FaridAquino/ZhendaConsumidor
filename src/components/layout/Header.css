@@ -1,0 +1,217 @@
+/* Columna fija a la izquierda, centrada en vertical con flex.
+   Se centra con `justify-content`, NO con translateY(-50%): anime.js escribe
+   `transform` inline y borraria cualquier centrado hecho con transform. */
+.header {
+  --nodo: 32px; /* diametro del circulo de cada paso */
+  --tramo: var(--space-12); /* separacion entre nodos = largo de cada tramo */
+  position: fixed;
+  left: var(--space-6);
+  inset-block: 0;
+  z-index: 50;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  pointer-events: none;
+}
+
+.header__burbuja {
+  /* Capa propia en el compositor: el panel flota sobre contenido que repinta
+     en cada frame, y sin esto su sombra y su borde se re-rasterizan con cada
+     repintado de lo que hay debajo. */
+  will-change: transform, opacity;
+  pointer-events: auto;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6);
+  padding: var(--space-6) var(--space-4);
+  border-radius: var(--radius-lg);
+  color: var(--c-berry-800);
+
+  /* Burbuja SIN backdrop-filter, a proposito. El riel es `fixed` y flota sobre
+     el mapa y sobre el canvas de la secuencia: cada repintado de lo que hay
+     detras obligaba al navegador a rehacer el desenfoque, durante todo el
+     scroll de la pagina. Un fondo casi opaco con un degradado suave da el
+     mismo aire de cristal y no cuesta nada por frame. */
+  background: linear-gradient(
+    color-mix(in srgb, var(--c-paper) 97%, transparent),
+    color-mix(in srgb, var(--c-paper) 92%, transparent)
+  );
+  border: 1px solid var(--c-line);
+  box-shadow:
+    var(--shadow-md),
+    inset 0 1px 0 color-mix(in srgb, var(--c-paper) 90%, transparent);
+}
+
+.header__marca {
+  padding-inline: var(--space-2);
+  font-size: var(--fs-lg);
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  white-space: nowrap;
+}
+
+.header__pipeline {
+  position: relative;
+}
+
+/* Tuberia: va del centro del primer nodo al centro del ultimo. */
+.header__linea {
+  position: absolute;
+  left: calc(var(--nodo) / 2 - 1px);
+  top: calc(var(--nodo) / 2);
+  bottom: calc(var(--nodo) / 2);
+  width: 2px;
+  border-radius: var(--radius-pill);
+  background: var(--c-line);
+  overflow: hidden;
+}
+
+/* La pintura. Crece con `scaleY` (compositor puro, sin recalcular layout).
+   Si el JS falla se queda vacia: la tuberia sigue visible, nada desaparece. */
+.header__relleno {
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: linear-gradient(var(--c-berry-500), var(--c-berry-700));
+  /* --pintado (0 -> 1) lo escribe Header.jsx. El eje lo decide la CSS, no
+     el JS: aqui vertical, en la media query horizontal. El valor por defecto
+     es 0 para que la tuberia salga vacia si el JS no llega a arrancar. */
+  transform: scaleY(var(--pintado, 0));
+  transform-origin: top center;
+}
+
+.header__pasos {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--tramo);
+}
+
+.header__paso {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  font-size: var(--fs-sm);
+  color: var(--text-soft);
+  white-space: nowrap;
+}
+
+.header__nodo {
+  flex: 0 0 auto;
+  width: var(--nodo);
+  height: var(--nodo);
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  background: var(--c-berry-100);
+  color: var(--c-berry-700);
+  /* El encendido lo hace CSS: anime.js solo mueve la pintura. Asi no hay dos
+     motores escribiendo sobre las mismas propiedades. */
+  transition:
+    background-color var(--dur-base) var(--ease-out),
+    color var(--dur-base) var(--ease-out),
+    box-shadow var(--dur-base) var(--ease-out);
+}
+
+.header__etiqueta {
+  transition: color var(--dur-base) var(--ease-out);
+}
+
+/* Paso ya alcanzado por la pintura. */
+.header__paso--activo .header__nodo {
+  background: var(--c-berry-700);
+  color: var(--c-paper);
+  box-shadow: 0 0 0 4px color-mix(in srgb, var(--c-berry-300) 35%, transparent);
+}
+
+.header__paso--activo .header__etiqueta {
+  color: var(--c-berry-800);
+  font-weight: 600;
+}
+
+.header__icono {
+  width: 18px;
+  height: 18px;
+}
+
+/* --- Movil: el riel se tumba ------------------------------------------
+   Una columna fija a la izquierda se come el 16% del ancho de un movil de
+   390px y ademas tapa justo el centro de las imagenes a sangre. Abajo, en
+   horizontal, no roba ancho y cae donde llega el pulgar. El hueco que deja
+   de ocupar a la izquierda lo devuelve base.css (--riel-hueco: 0) y el que
+   pasa a ocupar abajo lo reserva --barra-alto. */
+@media (max-width: 860px) {
+  .header {
+    --nodo: 30px;
+    inset: auto 0 0 0;
+    flex-direction: row;
+    justify-content: center;
+    padding: var(--space-2);
+    /* Muescas del movil: sin esto la barra queda bajo el indicador de inicio
+       en iOS. Si no hay area segura el valor es 0 y no molesta. */
+    padding-bottom: calc(var(--space-2) + env(safe-area-inset-bottom, 0px));
+  }
+
+  .header__burbuja {
+    flex-direction: row;
+    align-items: center;
+    width: 100%;
+    padding: var(--space-3) var(--space-4);
+    border-radius: var(--radius-lg);
+  }
+
+  .header__marca {
+    display: none;
+  }
+
+  .header__pipeline {
+    flex: 1;
+  }
+
+  /* Pasos de igual ancho: es lo que permite colocar la tuberia sin medir
+     nada, porque el centro del primer nodo cae en 50%/n del total. */
+  .header__pasos {
+    flex-direction: row;
+    gap: 0;
+  }
+
+  .header__paso {
+    flex: 1;
+    flex-direction: column;
+    gap: var(--space-1);
+    text-align: center;
+  }
+
+  .header__linea {
+    left: calc(50% / var(--pasos, 3));
+    right: calc(50% / var(--pasos, 3));
+    top: calc(var(--nodo) / 2 - 1px);
+    bottom: auto;
+    width: auto;
+    height: 2px;
+  }
+
+  .header__relleno {
+    transform: scaleX(var(--pintado, 0));
+    transform-origin: left center;
+  }
+
+  /* La etiqueta si cabe debajo del icono: con tres pasos son ~120px por
+     columna, de sobra para "Recolección" a este cuerpo. */
+  .header__etiqueta {
+    font-size: var(--fs-xs);
+    line-height: 1.2;
+    letter-spacing: -0.01em;
+  }
+}
+
+/* Moviles muy estrechos: solo los iconos. "Exportación" a 0.78rem ya no
+   cabe en 100px sin partirse. */
+@media (max-width: 360px) {
+  .header__etiqueta {
+    display: none;
+  }
+}

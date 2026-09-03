@@ -1,0 +1,84 @@
+.cadena {
+  background: var(--surface-alt);
+}
+
+.cadena__intro {
+  max-width: 46rem;
+  margin-bottom: var(--space-16);
+}
+
+.cadena__pista {
+  position: relative;
+  padding-left: var(--space-12);
+}
+
+.cadena__linea {
+  position: absolute;
+  left: calc(var(--space-4) + 2px);
+  top: 0;
+  width: 2px;
+  height: 100%;
+  color: var(--c-berry-500);
+}
+
+.cadena__lista {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: var(--space-12);
+}
+
+.cadena__etapa {
+  position: relative;
+}
+
+.cadena__punto {
+  position: absolute;
+  left: calc(var(--space-12) * -1 + var(--space-2));
+  top: var(--space-6);
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 32% 30%, var(--c-berry-300), var(--c-berry-700));
+  box-shadow: 0 0 0 6px color-mix(in srgb, var(--c-berry-300) 28%, transparent);
+  transform-origin: center;
+}
+
+.cadena__tarjeta {
+  background: var(--c-paper);
+  border: 1px solid var(--c-line);
+  border-radius: var(--radius-lg);
+  padding: var(--space-6);
+  box-shadow: var(--shadow-sm);
+  max-width: 34rem;
+}
+
+.cadena__indice {
+  display: inline-block;
+  font-size: var(--fs-xs);
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  color: var(--c-berry-500);
+  margin-bottom: var(--space-2);
+}
+
+.cadena__tarjeta h3 {
+  margin-bottom: var(--space-2);
+  font-size: var(--fs-lg);
+}
+
+.cadena__tarjeta p {
+  margin: 0;
+  color: var(--text-soft);
+  font-size: var(--fs-sm);
+}
+
+@media (max-width: 640px) {
+  .cadena__pista {
+    padding-left: var(--space-8);
+  }
+  .cadena__punto {
+    left: calc(var(--space-8) * -1 + var(--space-1));
+  }
+}

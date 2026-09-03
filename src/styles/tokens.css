@@ -1,0 +1,86 @@
+/* Design tokens. Toda la paleta y el ritmo tipografico viven aqui:
+   ningun componente define un color literal. */
+:root {
+  /* Marca: arandano */
+  --c-berry-900: #1b0f2b;
+  --c-berry-800: #2a1745;
+  --c-berry-700: #3d2263;
+  --c-berry-500: #6b3fa0;
+  --c-berry-300: #a986d9;
+  --c-berry-100: #e4d8f7;
+
+  /* Campo */
+  --c-leaf-600: #2f6b4f;
+  --c-leaf-400: #4f9d73;
+  --c-leaf-200: #b7e0c9;
+
+  /* Neutros */
+  --c-ink: #14101c;
+  --c-ink-soft: #4a4459;
+  --c-paper: #fbf9ff;
+  --c-paper-alt: #f2edfa;
+  --c-line: #e0d8ee;
+
+  /* Estados de la cadena de frio */
+  --c-ok: #2f8f5b;
+  --c-warn: #c98a1e;
+  --c-alert: #c1453f;
+
+  /* Superficies */
+  --surface: var(--c-paper);
+  --surface-alt: var(--c-paper-alt);
+  --text: var(--c-ink);
+  --text-soft: var(--c-ink-soft);
+
+  /* Tipografia */
+  --font-sans: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --font-display: "Inter", system-ui, sans-serif;
+  /* Codigos de lote y clamshell: monoespaciada para que los digitos no
+     bailen de ancho y se lean como lo que son, un identificador. */
+  --font-mono: ui-monospace, "SFMono-Regular", "Consolas", monospace;
+  --fs-xs: 0.78rem;
+  --fs-sm: 0.9rem;
+  --fs-md: 1rem;
+  --fs-lg: 1.25rem;
+  --fs-xl: clamp(1.6rem, 3vw, 2.4rem);
+  --fs-2xl: clamp(2.4rem, 6vw, 4.5rem);
+
+  /* Ritmo */
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 0.75rem;
+  --space-4: 1rem;
+  --space-6: 1.5rem;
+  --space-8: 2rem;
+  --space-12: 3rem;
+  --space-16: 4rem;
+  --space-24: 6rem;
+
+  --radius-sm: 6px;
+  --radius-md: 12px;
+  --radius-lg: 24px;
+  --radius-pill: 999px;
+
+  --shadow-sm: 0 1px 2px rgba(20, 16, 28, 0.08);
+  --shadow-md: 0 12px 32px rgba(27, 15, 43, 0.12);
+  --shadow-lg: 0 32px 64px rgba(27, 15, 43, 0.18);
+
+  --content-width: 1120px;
+  /* Hueco que reserva el contenido para el riel lateral fijo.
+     --riel-hueco lo usan a la vez #contenido (lo reserva) y .sangrado
+     (lo recupera): deben moverse siempre juntos. */
+  --riel-ancho: 200px;
+  --riel-hueco: var(--riel-ancho);
+  /* Alto de la barra inferior en movil, donde el riel deja de ser columna y
+     pasa a ser barra. En escritorio vale 0, asi los calculos que la restan
+     (padding de #contenido, posicion de las fichas) valen para los dos casos
+     sin duplicar reglas. El valor real se fija en base.css. */
+  --barra-alto: 0px;
+
+  /* Duraciones: las animaciones de anime.js leen estas mismas escalas
+     via getComputedStyle cuando necesitan sincronizarse con CSS. */
+  --dur-fast: 180ms;
+  --dur-base: 320ms;
+  --dur-slow: 700ms;
+  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+}
