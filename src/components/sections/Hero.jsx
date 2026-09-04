@@ -4,6 +4,7 @@ import { useAnimeScope } from '../../hooks/useAnimeScope.js';
 import { DUR, EASE, RISE, prefersReducedMotion } from '../../animations/motion.js';
 import { parallax } from '../../animations/scroll.js';
 import { recurso } from '../../recursos.js';
+import BarraSeccion from '../ui/BarraSeccion.jsx';
 import './Hero.css';
 
 /*
@@ -106,7 +107,10 @@ export default function Hero({ lote }) {
   }, [lote.clamshell]);
 
   return (
-    <section className="hero" ref={root}>
+    <section className="hero con-barra" ref={root}>
+      {/* Ayuda de depuracion: quitar junto con BarraSeccion. */}
+      <BarraSeccion nombre="Hero" color="var(--c-berry-800)" />
+
       {/* Capa decorativa aparte del contenido: si el parallax moviera el
           nodo que envuelve al texto, se llevaria el texto con el. */}
       <div className="hero__fondo" aria-hidden="true">
@@ -129,7 +133,6 @@ export default function Hero({ lote }) {
 
         <p className="lead hero__entrada reveal">
           Los arándanos {lote.variedad} de este envase se cosecharon en {lote.fundo}.
-          Baja y sigue su recorrido: campo, packing, cadena de frío y destino.
         </p>
 
         {/* Ficha de identidad. Es un <dl>: cada dato es un par etiqueta-valor,

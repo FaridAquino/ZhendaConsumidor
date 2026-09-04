@@ -2,6 +2,7 @@ import { animate, onScroll, utils } from 'animejs';
 import { REGIONES, VISTA_ICA, VISTA_PERU } from '../../data/peru.js';
 import { useAnimeScope } from '../../hooks/useAnimeScope.js';
 import { prefersReducedMotion } from '../../animations/motion.js';
+import BarraSeccion from '../ui/BarraSeccion.jsx';
 import './Mapa.css';
 
 /*
@@ -86,7 +87,10 @@ export default function Mapa() {
   });
 
   return (
-    <section className="mapa sangrado" ref={root} id="recoleccion">
+    <section className="mapa sangrado con-barra" ref={root} id="recoleccion">
+      {/* Ayuda de depuracion: quitar junto con BarraSeccion. */}
+      <BarraSeccion nombre="Mapa · #recoleccion" color="var(--c-berry-500)" />
+
       <div className="mapa__viewport">
         <svg
           className="mapa__svg"

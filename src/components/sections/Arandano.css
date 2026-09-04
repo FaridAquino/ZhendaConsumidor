@@ -50,6 +50,11 @@
 }
 
 .arandano__panel {
+  /* La franja del Brix va a sangre hasta el borde del panel: necesita saber
+     cuanto padding recuperar, y ese padding cambia en movil. Una sola
+     variable para los dos sitios. */
+  --panel-pad: var(--space-6);
+
   /* Capa propia en el compositor: el panel flota sobre contenido que repinta
      en cada frame, y sin esto su sombra y su borde se re-rasterizan con cada
      repintado de lo que hay debajo. */
@@ -58,8 +63,10 @@
   right: var(--space-8);
   bottom: var(--space-12);
   width: min(100% - var(--space-8) * 2, 26rem);
-  padding: var(--space-6);
+  padding: var(--panel-pad);
   border-radius: var(--radius-lg);
+  /* Sin esto, las esquinas de la franja del Brix asoman por fuera del radio. */
+  overflow: hidden;
   /* SIN backdrop-filter a proposito: el panel flota sobre un canvas que cambia
      en cada fotograma, asi que el navegador tendria que rehacer el desenfoque
      60 veces por segundo. Es de lo que mas cuesta en una secuencia de scroll.
@@ -86,12 +93,39 @@
   opacity: 0;
 }
 
+/* --- Indice Brix -------------------------------------------------------
+   Franja a sangre dentro del panel. El contraste lo pone el fondo oscuro, no
+   un tamano mayor: la cifra ya estaba en --fs-2xl, lo que le faltaba era un
+   plano propio donde no compitiera con los sellos y los fitosanitarios.
+
+   El movimiento NO lo hace anime.js. El scroll escribe una custom property
+   (--brix-avance) y una clase, y el CSS hace el resto: mismo contrato que ya
+   usan .arandano__cert y .arandano__pesticida. */
+.arandano__medidor {
+  position: relative;
+  margin: calc(var(--panel-pad) * -1) calc(var(--panel-pad) * -1) var(--space-4);
+  padding: var(--space-4) var(--panel-pad) var(--space-8);
+  background: linear-gradient(
+    135deg,
+    var(--c-berry-900),
+    var(--c-berry-700) 70%,
+    var(--c-berry-500)
+  );
+}
+
+/* El eyebrow global va en --c-berry-500: sobre este fondo no se lee. */
+.arandano__medidor .eyebrow {
+  margin-bottom: var(--space-2);
+  color: var(--c-berry-300);
+}
+
 .arandano__brix {
+  position: relative;
   display: flex;
   align-items: baseline;
   gap: var(--space-2);
-  margin-bottom: var(--space-2);
-  color: var(--c-berry-800);
+  margin: 0 0 var(--space-4);
+  color: var(--c-paper);
 }
 
 .arandano__brix-valor {
@@ -106,12 +140,148 @@
   font-variant-numeric: tabular-nums;
   display: inline-block;
   min-width: 4ch;
+  /* El pulso crece hacia la derecha: con el origen centrado, la cifra se
+     comeria el hueco de la unidad al ampliarse. */
+  transform-origin: 0 60%;
+  transition: color var(--dur-slow) var(--ease-out);
 }
 
 .arandano__brix-unidad {
   font-size: var(--fs-lg);
   font-weight: 600;
-  color: var(--c-berry-500);
+  color: var(--c-berry-300);
+}
+
+/* Veredicto. Empujado al extremo del flex para que no compita con la cifra:
+   se lee despues, que es justo cuando el numero termina de contar. */
+.arandano__brix-sello {
+  margin-inline-start: auto;
+  align-self: center;
+  padding: var(--space-1) var(--space-3);
+  border: 1px solid color-mix(in srgb, var(--c-leaf-200) 55%, transparent);
+  border-radius: var(--radius-pill);
+  color: var(--c-leaf-200);
+  font-size: var(--fs-xs);
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+
+  opacity: 0;
+  translate: 0 var(--space-2);
+  transition:
+    opacity var(--dur-base) var(--ease-out),
+    translate var(--dur-base) var(--ease-out);
+}
+
+/* Destello de un solo uso detras de la cifra. Fuera de flujo a proposito: si
+   ocupara sitio, encenderlo moveria la linea entera. */
+.arandano__brix-halo {
+  position: absolute;
+  left: 0;
+  top: 50%;
+  width: 5rem;
+  aspect-ratio: 1;
+  translate: -30% -50%;
+  border-radius: var(--radius-pill);
+  background: radial-gradient(
+    circle,
+    color-mix(in srgb, var(--c-berry-300) 70%, transparent),
+    transparent 70%
+  );
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* --- La regla ----------------------------------------------------------
+   Da la referencia que a la cifra sola le falta: 13.4 no dice nada hasta que
+   se ve donde cae respecto al umbral. */
+.arandano__regla {
+  position: relative;
+  height: 8px;
+  border-radius: var(--radius-pill);
+  background: color-mix(in srgb, var(--c-paper) 18%, transparent);
+}
+
+.arandano__regla-relleno {
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: linear-gradient(90deg, var(--c-berry-300), var(--c-leaf-200));
+  /* El scroll solo escribe el numero; scaleX es trabajo de compositor.
+     Ojo al valor por defecto: sin JS la barra se queda LLENA, no vacia, para
+     que el dato se siga leyendo. Mismo criterio que .js .reveal en base.css. */
+  transform: scaleX(var(--brix-avance, 1));
+  transform-origin: left center;
+}
+
+.arandano__regla-umbral {
+  position: absolute;
+  top: -4px;
+  bottom: -4px;
+  left: calc(var(--brix-umbral) * 100%);
+  width: 2px;
+  border-radius: var(--radius-pill);
+  background: color-mix(in srgb, var(--c-paper) 70%, transparent);
+}
+
+.arandano__regla-umbral-texto {
+  position: absolute;
+  top: calc(100% + var(--space-2));
+  left: 50%;
+  translate: -50% 0;
+  white-space: nowrap;
+  font-size: var(--fs-xs);
+  font-weight: 600;
+  color: var(--c-berry-300);
+  transition: color var(--dur-base) var(--ease-out);
+}
+
+/* --- Cruzar el umbral --------------------------------------------------
+   El remate de la seccion. La clase la pone marcar() con histeresis, asi que
+   esto se dispara una vez por pasada y no una vez por tick de scroll.
+   Bajo reduced-motion, base.css deja animaciones y transiciones en 0.01ms:
+   se ve el estado final (barra llena, sello puesto) sin movimiento. */
+.arandano__medidor--dulce .arandano__brix-valor {
+  color: var(--c-leaf-200);
+  animation: brix-pulso var(--dur-slow) var(--ease-out);
+}
+
+.arandano__medidor--dulce .arandano__brix-halo {
+  animation: brix-halo var(--dur-slow) var(--ease-out);
+}
+
+.arandano__medidor--dulce .arandano__brix-sello {
+  opacity: 1;
+  translate: 0 0;
+}
+
+.arandano__medidor--dulce .arandano__regla-umbral-texto {
+  color: var(--c-leaf-200);
+}
+
+/* Se anima 'scale' y no 'transform': asi el halo conserva su 'translate' de
+   centrado sin tener que repetirlo en cada fotograma. */
+@keyframes brix-pulso {
+  0% {
+    scale: 1;
+  }
+  35% {
+    scale: 1.12;
+  }
+  100% {
+    scale: 1;
+  }
+}
+
+@keyframes brix-halo {
+  from {
+    opacity: 0.85;
+    scale: 0.4;
+  }
+  to {
+    opacity: 0;
+    scale: 1.7;
+  }
 }
 
 .arandano__brix-pie {
@@ -342,7 +512,8 @@
   .arandano__panel {
     position: static;
     width: auto;
-    padding: var(--space-4);
+    --panel-pad: var(--space-4);
+    padding: var(--panel-pad);
     /* Ya no flota sobre nada que repinte: sin capa propia. */
     will-change: auto;
     /* Explicito aunque sea el defecto: es la contrapartida del min-height: 0
@@ -384,6 +555,14 @@
   }
 
   .arandano__brix-pie {
+    display: none;
+  }
+
+  .arandano__medidor {
+    padding-bottom: var(--space-4);
+  }
+
+  .arandano__regla-umbral-texto {
     display: none;
   }
 

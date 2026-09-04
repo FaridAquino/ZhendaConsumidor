@@ -3,6 +3,7 @@ import { crearSecuencia } from '../../animations/secuencia.js';
 import { useAnimeScope } from '../../hooks/useAnimeScope.js';
 import { prefersReducedMotion } from '../../animations/motion.js';
 import { recurso } from '../../recursos.js';
+import BarraSeccion from '../ui/BarraSeccion.jsx';
 import './Arandano.css';
 
 /*
@@ -113,6 +114,14 @@ const SECUENCIA = {
   pestDesde: 0.58, // progreso al que aparece el primer fitosanitario
   pestCada: 0.08, // separacion entre fitosanitarios
 };
+
+/* Regla del indice Brix. `escala` es solo el tope del dibujo: con 18 el valor
+   real de un arandano de exportacion (12-14) cae en dos tercios de la barra y
+   queda sitio a la derecha, asi se lee que aun hay recorrido. `umbral` es el
+   12 del que habla el pie: por encima, el fruto llega dulce al consumidor.
+   `histeresis` existe porque el scrub puede temblar justo en 12,0: sin ella el
+   destello se reiniciaria en cada tick. */
+const BRIX = { escala: 18, umbral: 12, histeresis: 0.4 };
 /* --------------------------------------------------------------------- */
 
 /* Ponlo a false cuando ya no haga falta medir. Con true, el reproductor
@@ -131,9 +140,10 @@ export default function Arandano({ lote }) {
     const seccion = scope.root; // la raiz no es descendiente: no vale utils.$
     const contenedor = utils.$('.arandano__lienzo')[0];
     const contador = utils.$('.arandano__brix-valor')[0];
+    const medidor = utils.$('.arandano__medidor')[0];
     const certificados = utils.$('.arandano__cert');
     const fitosanitarios = utils.$('.arandano__pesticida');
-    if (!contenedor || !contador) return undefined;
+    if (!contenedor || !contador || !medidor) return undefined;
 
     // Se resuelve mas abajo: repinta el frame que toque en cuanto la precarga
     // termina, por si el usuario ya habia hecho scroll mientras cargaba.
@@ -283,13 +293,37 @@ export default function Arandano({ lote }) {
     // 60 fps y una decima de resolucion, eso son ~134 escrituras en todo el
     // recorrido en vez de varios miles.
     let brixMostrado = '';
+    let reglaMostrada = '';
+    let dulce = false;
+    // Hasta donde llega la regla cuando el contador ya marca el valor final.
+    const topeBrix = Math.min(1, lote.brix / BRIX.escala);
+
     const marcar = (progreso) => {
       const avance = Math.min(1, progreso / SECUENCIA.brixHasta);
-      const texto = (lote.brix * avance).toFixed(1);
+      const valor = lote.brix * avance;
+
+      const texto = valor.toFixed(1);
       if (texto !== brixMostrado) {
         brixMostrado = texto;
         contador.textContent = texto;
       }
+
+      // La regla es UNA custom property: el CSS la convierte en un scaleX, que
+      // es trabajo de compositor y no toca el layout. Tres decimales dan de
+      // sobra para una barra de 26rem (~0,3 px de paso).
+      const relleno = (avance * topeBrix).toFixed(3);
+      if (relleno !== reglaMostrada) {
+        reglaMostrada = relleno;
+        medidor.style.setProperty('--brix-avance', relleno);
+      }
+
+      // Cruzar el umbral es el remate de la seccion: enciende el sello, el
+      // halo y el pulso de la cifra. La histeresis lo mantiene encendido si el
+      // scroll retrocede unas decimas, para que no parpadee en el borde.
+      if (valor >= BRIX.umbral) dulce = true;
+      else if (valor < BRIX.umbral - BRIX.histeresis) dulce = false;
+      medidor.classList.toggle('arandano__medidor--dulce', dulce);
+
       certificados.forEach((cert, i) => {
         cert.classList.toggle(
           'arandano__cert--visible',
@@ -377,7 +411,10 @@ export default function Arandano({ lote }) {
   }, [lote.codigo]);
 
   return (
-    <section className="arandano sangrado" ref={root} id="quimicos">
+    <section className="arandano sangrado con-barra" ref={root} id="quimicos">
+      {/* Ayuda de depuracion: quitar junto con BarraSeccion. */}
+      <BarraSeccion nombre="Arándano · #quimicos" color="var(--c-berry-700)" />
+
       <div className="arandano__viewport">
         <div
           className="arandano__lienzo"
@@ -388,12 +425,36 @@ export default function Arandano({ lote }) {
         <span className="arandano__carga" aria-hidden="true" />
 
         <div className="arandano__panel">
-          <p className="eyebrow">Análisis en planta</p>
+          {/* El Brix no es una linea mas del panel: es el dato que la seccion
+              quiere que te lleves, asi que ocupa una franja propia a sangre.
+              --brix-umbral sale de la MISMA constante que usa el JS para
+              encender el sello; si se escribiera el 12 dos veces, la marca de
+              la regla y el destello dejarian de coincidir. */}
+          <div
+            className="arandano__medidor"
+            style={{ '--brix-umbral': BRIX.umbral / BRIX.escala }}
+          >
+            <p className="eyebrow">Análisis en planta</p>
 
-          <p className="arandano__brix">
-            <span className="arandano__brix-valor">0.0</span>
-            <span className="arandano__brix-unidad">°Bx</span>
-          </p>
+            <p className="arandano__brix">
+              <span className="arandano__brix-halo" aria-hidden="true" />
+              <span className="arandano__brix-valor">0.0</span>
+              <span className="arandano__brix-unidad">°Bx</span>
+              {/* Condicional y no solo oculto por CSS: un lote por debajo del
+                  umbral no debe hacer que un lector de pantalla lea "Dulce". */}
+              {lote.brix >= BRIX.umbral && <span className="arandano__brix-sello">Dulce</span>}
+            </p>
+
+            {/* La referencia que a la cifra sola le falta: 13.4 no dice nada
+                hasta que se ve donde cae respecto al 12. */}
+            <div className="arandano__regla" aria-hidden="true">
+              <span className="arandano__regla-relleno" />
+              <span className="arandano__regla-umbral">
+                <span className="arandano__regla-umbral-texto">12 °Bx</span>
+              </span>
+            </div>
+          </div>
+
           <p className="arandano__brix-pie">
             Índice Brix: azúcares disueltos en el fruto. Por encima de 12 el arándano llega dulce al
             consumidor tras la cadena de frío.
@@ -412,7 +473,7 @@ export default function Arandano({ lote }) {
               es la respuesta a la pregunta que trae aqui a mucha gente, asi
               que va con nombre, para que se aplico y que residuo quedo. */}
           <div className="arandano__quimicos">
-            <p className="arandano__subtitulo">Fitosanitarios aplicados</p>
+            <p className="arandano__subtitulo">Pesticidas aplicados</p>
 
             <ul className="arandano__pesticidas">
               {lote.pesticidas.map((pesticida) => (

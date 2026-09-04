@@ -1,0 +1,51 @@
+/* Ayuda de depuracion. Ver la cabecera de BarraSeccion.jsx. */
+
+/* La barra se posiciona respecto a su seccion, asi que la seccion tiene que
+   ser su contenedor. Casi todas ya son `position: relative` por su cuenta
+   (llevan dentro un viewport anclado); esta clase esta para las que no, y
+   para dejarlo dicho en un sitio en vez de repetirlo en seis hojas. */
+.con-barra {
+  position: relative;
+}
+
+/* Linea horizontal en el borde superior de la seccion, o sea justo en la
+   costura con la anterior: las secciones van pegadas (0px entre ellas, el
+   aire que se ve es padding de dentro), asi que el borde de una ES el
+   separador entre las dos. */
+.barra-seccion {
+  position: absolute;
+  top: 0;
+  /* De lado a lado de la ventana. Las secciones a sangre ya llegan al borde;
+     las normales viven dentro del hueco que #contenido reserva para el riel,
+     asi que hay que devolverselo o sus lineas empezarian 200px mas adentro y
+     no se leerian como el mismo separador. En movil --riel-hueco vale 0 y
+     esto no hace nada. */
+  left: calc(var(--riel-hueco) * -1);
+  right: 0;
+  height: 4px;
+  background: var(--barra-color);
+  /* Por debajo del riel (z-index 50) y por encima de todo lo demas. */
+  z-index: 40;
+  pointer-events: none;
+}
+
+.sangrado > .barra-seccion {
+  left: 0;
+}
+
+/* Colgada bajo la linea, en el extremo derecho: es el unico borde que
+   comparten todas las secciones, a sangre o no. */
+.barra-seccion__etiqueta {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  padding: var(--space-1) var(--space-3);
+  border-end-start-radius: var(--radius-sm);
+  background: var(--barra-color);
+  color: var(--c-paper);
+  font-size: var(--fs-xs);
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}

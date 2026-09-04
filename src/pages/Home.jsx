@@ -1,11 +1,13 @@
 import { useSearchParams } from 'react-router-dom';
 import Hero from '../components/sections/Hero.jsx';
 import Mapa from '../components/sections/Mapa.jsx';
+import Paisaje from '../components/sections/Paisaje.jsx';
 import Arandano from '../components/sections/Arandano.jsx';
 import Empresa from '../components/sections/Empresa.jsx';
 import BuscadorLote from '../components/ui/BuscadorLote.jsx';
 import { LOTES, buscarLote, buscarPorClamshell } from '../data/lotes.js';
 import { useAnimeScope } from '../hooks/useAnimeScope.js';
+import BarraSeccion from '../components/ui/BarraSeccion.jsx';
 import './Home.css';
 
 /*
@@ -29,6 +31,9 @@ export default function Home() {
     <>
       <Hero lote={lote} />
       <Mapa />
+      {/* Cierra #recoleccion: el mapa termina enfocado en Ica y esto es Ica.
+          No lleva nodo en el riel; es el remate del paso 1, no un paso mas. */}
+      <Paisaje />
       <Arandano lote={lote} />
       {/* Ultimo paso del riel (#exportacion) y final del relato: el riel
           enciende su tercer nodo con el progreso de la pagina entera, asi que
@@ -41,7 +46,10 @@ export default function Home() {
           existiendo; cuando haya que escribirlos, se vuelven a montar. */}
       <Empresa lote={lote} />
 
-      <section className="section busqueda" id="buscar" ref={root}>
+      <section className="section busqueda con-barra" id="buscar" ref={root}>
+        {/* Ayuda de depuracion: quitar junto con BarraSeccion. */}
+        <BarraSeccion nombre="Buscador · #buscar" color="var(--c-ink-soft)" />
+
         <div className="container busqueda__inner">
           <BuscadorLote />
         </div>

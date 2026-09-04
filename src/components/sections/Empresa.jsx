@@ -2,6 +2,7 @@ import { animate, onScroll, utils } from 'animejs';
 import { useAnimeScope } from '../../hooks/useAnimeScope.js';
 import { prefersReducedMotion } from '../../animations/motion.js';
 import { recurso } from '../../recursos.js';
+import BarraSeccion from '../ui/BarraSeccion.jsx';
 import './Empresa.css';
 
 /*
@@ -129,7 +130,10 @@ export default function Empresa({ lote }) {
   );
 
   return (
-    <section className="empresa sangrado" ref={root} id="exportacion">
+    <section className="empresa sangrado con-barra" ref={root} id="exportacion">
+      {/* Ayuda de depuracion: quitar junto con BarraSeccion. */}
+      <BarraSeccion nombre="Empresa · #exportacion" color="var(--c-warn)" />
+
       <div className="empresa__viewport">
         {/* La escena da la caja comun a foto y recuadro: asi el recuadro se
             ancla a la esquina de la foto y no al borde de la ventana, que es

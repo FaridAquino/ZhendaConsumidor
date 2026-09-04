@@ -1,0 +1,230 @@
+/* AccordionGallery. Ver la cabecera de AccordionGallery.jsx para lo que
+   cambia respecto al original de reactbits.
+
+   Todo el movimiento esta aqui, en transiciones. El JSX solo escribe cuatro
+   custom properties por panel (--ag-giro, --ag-desvio, --ag-gris, --ag-tinte)
+   y una clase. Las cuatro se usan DENTRO de propiedades que si son animables
+   (transform, filter, opacity), que es el truco que permite transicionarlas:
+   una custom property por si sola no transiciona, pero el `transform` que la
+   contiene si, porque su valor calculado cambia. */
+.accordion-gallery {
+  --ag-accent: var(--c-paper);
+  --ag-overlay: var(--c-berry-900);
+  --ag-text: var(--c-paper);
+  --ag-gap: 10px;
+  --ag-radius: var(--radius-md);
+  --ag-dur: 0.6s;
+  --ag-ease: var(--ease-out);
+  --ag-stagger: 0.06s;
+  --ag-media: 320px;
+
+  display: flex;
+  flex-direction: row;
+  gap: var(--ag-gap);
+  width: 100%;
+  max-width: 100%;
+  /* La perspectiva vive en el contenedor, no en cada panel: si la pusiera
+     cada uno, todos se verian desde su propio centro y la fila dejaria de
+     leerse como un solo objeto. */
+  perspective: 1400px;
+  perspective-origin: 50% 50%;
+}
+
+.accordion-gallery--vertical {
+  flex-direction: column;
+}
+
+/* Se anima `flex-grow`, que es una propiedad de layout: el navegador rehace
+   el reparto de la fila en cada fotograma. Es la excepcion consciente a la
+   regla de animar solo transform y opacity, y se sostiene porque son tres
+   paneles, la transicion dura 600 ms y no ocurre durante el scroll. La
+   alternativa (un scaleX) deformaria las fotos, que es peor. */
+.ag-panel {
+  position: relative;
+  flex: 1 1 0;
+  min-width: 0;
+  min-height: 0;
+  overflow: hidden;
+  border-radius: var(--ag-radius);
+  cursor: pointer;
+  display: block;
+  color: inherit;
+  text-decoration: none;
+  outline: none;
+  background: var(--c-berry-900);
+  box-shadow: var(--shadow-md);
+  transform-style: preserve-3d;
+  transform-origin: center center;
+  transform: rotateY(var(--ag-giro, 0deg));
+  -webkit-tap-highlight-color: transparent;
+  transition:
+    flex-grow var(--ag-dur) var(--ag-ease),
+    transform var(--ag-dur) var(--ag-ease);
+}
+
+.accordion-gallery--vertical .ag-panel {
+  /* El eje de giro cambia con la orientacion, y el signo tambien: en columna,
+     un panel por encima del abierto tiene que inclinarse hacia abajo. */
+  transform: rotateX(calc(var(--ag-giro, 0deg) * -1));
+}
+
+.ag-panel:focus-visible {
+  box-shadow:
+    0 0 0 2px var(--ag-accent),
+    var(--shadow-md);
+}
+
+.ag-panel__marco {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  border-radius: inherit;
+}
+
+/* La imagen es MAS ancha que su panel (HOLGURA_IMAGEN en el JSX): esa holgura
+   es la que permite desplazarla sin que asome el fondo. */
+.ag-panel__media {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: var(--ag-media);
+  height: 100%;
+  transform: translate(-50%, -50%) translateX(var(--ag-desvio, 0px));
+  filter: grayscale(var(--ag-gris, 1));
+  will-change: transform, filter;
+  transition:
+    transform var(--ag-dur) var(--ag-ease),
+    filter var(--ag-dur) var(--ag-ease);
+}
+
+.accordion-gallery--vertical .ag-panel__media {
+  width: 100%;
+  height: var(--ag-media);
+  transform: translate(-50%, -50%) translateY(var(--ag-desvio, 0px));
+}
+
+.ag-panel__media img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  user-select: none;
+  -webkit-user-drag: none;
+}
+
+/* Dos capas y no una: el degradado de abajo es fijo (esta para que el texto
+   se lea sobre cualquier foto) y el atenuado de los paneles cerrados es el
+   que se enciende y se apaga. Si fueran la misma capa habria que animar un
+   `background`, que no se puede interpolar bien. */
+.ag-panel__velo {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: linear-gradient(
+    180deg,
+    transparent 45%,
+    color-mix(in srgb, var(--ag-overlay) 78%, transparent) 100%
+  );
+}
+
+.ag-panel__velo::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: var(--ag-overlay);
+  opacity: var(--ag-tinte, 0.35);
+  transition: opacity var(--ag-dur) var(--ag-ease);
+}
+
+.ag-panel__pie {
+  position: absolute;
+  left: var(--space-4);
+  right: var(--space-4);
+  bottom: var(--space-4);
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  pointer-events: none;
+  z-index: 2;
+}
+
+.ag-panel__barra {
+  flex: none;
+  width: 3px;
+  height: 26px;
+  border-radius: var(--radius-pill);
+  background: var(--ag-accent);
+  box-shadow: 0 0 12px color-mix(in srgb, var(--ag-accent) 60%, transparent);
+}
+
+.ag-panel__texto {
+  color: var(--ag-text);
+  font-weight: 600;
+  font-size: clamp(var(--fs-md), 1.4vw, var(--fs-lg));
+  letter-spacing: 0.01em;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  text-shadow: 0 2px 14px rgba(0, 0, 0, 0.55);
+}
+
+/* El pie entra solo en el panel abierto, y la barra antes que el texto. */
+.ag-panel__barra,
+.ag-panel__texto {
+  opacity: 0;
+  translate: -14px 0;
+  transition:
+    opacity var(--ag-dur) var(--ag-ease),
+    translate var(--ag-dur) var(--ag-ease);
+}
+
+.ag-panel--activo .ag-panel__barra,
+.ag-panel--activo .ag-panel__texto {
+  opacity: 1;
+  translate: 0 0;
+}
+
+.ag-panel--activo .ag-panel__texto {
+  transition-delay: var(--ag-stagger);
+}
+
+/* Movil: la fila se convierte en columna de tiras. El acordeon horizontal en
+   un movil vertical deja paneles de 40px de ancho, donde no se ve la foto ni
+   cabe el pie. Sin perspectiva: las inclinaciones a este tamano solo restan.
+
+   El alto sigue siendo definido, y esa es la correccion al original, que aqui
+   ponia `height: auto`. `flex-grow` reparte el espacio LIBRE del contenedor;
+   con el alto en auto no hay espacio libre que repartir, asi que el panel
+   abierto no crecia y el acordeon se quedaba muerto en movil. El !important
+   es para ganarle al alto inline, que el componente escribe para escritorio. */
+@media (max-width: 520px) {
+  .accordion-gallery {
+    flex-direction: column;
+    perspective: none;
+    height: min(70svh, 30rem) !important;
+  }
+
+  .ag-panel {
+    min-height: 84px;
+    transform: none;
+  }
+
+  .accordion-gallery .ag-panel__media {
+    width: 100%;
+    height: var(--ag-media);
+    transform: translate(-50%, -50%) translateY(var(--ag-desvio, 0px));
+  }
+}
+
+/* base.css ya deja transiciones y animaciones en 0.01ms bajo reduced-motion,
+   pero no toca los retardos: sin esto el texto del pie seguiria esperando su
+   turno del stagger para nada. */
+@media (prefers-reduced-motion: reduce) {
+  .ag-panel--activo .ag-panel__texto {
+    transition-delay: 0s;
+  }
+
+  .ag-panel__media {
+    will-change: auto;
+  }
+}

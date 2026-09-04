@@ -1,0 +1,48 @@
+/* La seccion no dibuja caja: el fondo lo pone el body, igual que el resto
+   (ver la nota de #contenido en base.css). Aqui solo hay ritmo vertical.
+
+   Y el ritmo es ASIMETRICO a proposito. `.section` reparte el mismo aire
+   arriba y abajo, pero esta seccion no separa dos cosas equivalentes:
+
+     arriba  va #recoleccion, y esto es su remate — el mapa termina enfocado
+             en Ica y aqui se ve Ica. Van juntos, asi que el aire estorba: lo
+             que separa deja de leerse como continuacion.
+     abajo   va #quimicos, que si es otro paso del riel. Ahi el aire de
+             `.section` se queda tal cual, porque es lo que anuncia el corte.
+
+   Se usa `.section.paisaje` y no `.paisaje` a secas para no depender del
+   orden en que el bundler concatene esta hoja y base.css: las dos clases
+   sueltas pesan igual y ganaria la ultima que llegara. */
+.section.paisaje {
+  padding-top: var(--space-6);
+}
+
+/* En movil la separacion ya viene puesta desde el mapa: su ficha reserva
+   --barra-alto por debajo para no quedar tapada por la barra inferior, y ese
+   hueco sigue ahi cuando el mapa deja de estar anclado. Sumarle el padding de
+   esta seccion es contar el mismo aire dos veces. */
+@media (max-width: 860px) {
+  .section.paisaje {
+    padding-top: 0;
+  }
+}
+
+.paisaje__cabecera {
+  max-width: 46ch;
+  margin-bottom: var(--space-8);
+}
+
+.paisaje__titulo {
+  margin-bottom: var(--space-3);
+}
+
+.paisaje__lead {
+  margin-bottom: 0;
+}
+
+/* El wrapper existe para el reveal: anime.js le escribe `opacity` y un
+   `translateY` inline, y la galeria de dentro usa el suyo para las
+   inclinaciones. Si compartieran elemento, uno pisaria al otro. */
+.paisaje__galeria {
+  width: 100%;
+}
