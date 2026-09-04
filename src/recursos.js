@@ -8,7 +8,7 @@
  * 404, sin avisar: el build pasa, la pagina carga y la imagen no esta.
  *
  * `import.meta.env.BASE_URL` ya trae la barra final, asi que la ruta se pasa
- * SIN barra inicial:  recurso('images/logo.png')
+ * SIN barra inicial:  recurso('images/archivo.png')
  *
  * En desarrollo BASE_URL vale lo mismo que `base`, de modo que esto no cambia
  * nada de lo que ya se veia.

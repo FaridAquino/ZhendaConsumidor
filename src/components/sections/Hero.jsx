@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import { useAnimeScope } from '../../hooks/useAnimeScope.js';
 import { DUR, EASE, RISE, prefersReducedMotion } from '../../animations/motion.js';
 import { parallax } from '../../animations/scroll.js';
-import { recurso } from '../../recursos.js';
+import logoZhenda from '../../images/logo_zhenda.png';
 import BarraSeccion from '../ui/BarraSeccion.jsx';
 import './Hero.css';
 
@@ -123,7 +123,7 @@ export default function Hero({ lote }) {
             nombre de al lado no diga ya, y repetirlo obliga al lector de
             pantalla a oir "Zhenda" dos veces. */}
         <div className="hero__marca hero__entrada reveal">
-          <img className="hero__logo" src={recurso('images/logo.png')} alt="" width="48" height="48" />
+          <img className="hero__logo" src={logoZhenda} alt="" width="48" height="48" />
           <span className="hero__nombre">Zhenda</span>
         </div>
 
