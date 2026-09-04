@@ -6,7 +6,7 @@ import BarraSeccion from '../ui/BarraSeccion.jsx';
 import './Paisaje.css';
 
 /*
-  Remate de #recoleccion: el mapa termina enfocado en Ica y aqui se ve Ica.
+  Apartado visual de #recoleccion: despues del fruto, la historia vuelve a Ica.
 
   Va en su propia seccion y no dentro de Mapa porque aquella mide varias
   pantallas de alto con un viewport `sticky` dentro: cualquier cosa que se

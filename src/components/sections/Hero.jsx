@@ -4,6 +4,7 @@ import { useAnimeScope } from '../../hooks/useAnimeScope.js';
 import { DUR, EASE, RISE, prefersReducedMotion } from '../../animations/motion.js';
 import { parallax } from '../../animations/scroll.js';
 import logoZhenda from '../../images/logo_zhenda.png';
+import rosaHuaman from '../../images/rosa_huaman.png';
 import BarraSeccion from '../ui/BarraSeccion.jsx';
 import './Hero.css';
 
@@ -24,38 +25,15 @@ import './Hero.css';
     .hero__titulo, .hero__identidad, .hero__datos, .hero__dato,
     .hero__dato--principal,
     .hero__dato-etiqueta, .hero__dato-valor, .hero__dato-unidad,
-    .hero__dato-nota, .hero__recolector, .hero__recolector-icono,
-    .hero__recolector-texto, .hero__recolector-nombre,
+    .hero__dato-nota, .hero__recolector, .hero__recolector-foto,
+    .hero__recolector-contenido, .hero__recolector-eyebrow,
+    .hero__recolector-nombre, .hero__recolector-descripcion,
     .hero__recolector-detalle, .hero__certs, .hero__cert,
     .hero__acciones, .hero__scroll, .hero__scroll-linea, .char,
     .boton, .boton--primario, .boton--fantasma
 
   El ref `root` acota los selectores de anime.js a esta seccion.
 */
-
-/* Persona. Mismo envoltorio que los iconos del riel: 24x24, trazo, sin
-   relleno, `currentColor`. Decorativo: quien lo describe es el texto de al
-   lado, asi que va aria-hidden. */
-function IconoPersona() {
-  return (
-    <svg
-      className="hero__recolector-icono"
-      xmlns="http://www.w3.org/2000/svg"
-      width="20"
-      height="20"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      aria-hidden="true"
-    >
-      <path d="M12 7a4 4 0 1 0 0 8a4 4 0 0 0 0 -8" />
-      <path d="M6 21v-2a4 4 0 0 1 4 -4h4a4 4 0 0 1 4 4v2" />
-    </svg>
-  );
-}
 
 /* --- Parametros de la entrada ---------------------------------------- */
 const ENTRADA = {
@@ -141,15 +119,15 @@ export default function Hero({ lote }) {
         <div className="hero__identidad hero__entrada reveal">
           <dl className="hero__datos">
             <div className="hero__dato hero__dato--principal">
-              <dt className="hero__dato-etiqueta">Clamshell</dt>
+              <dt className="hero__dato-etiqueta">Lote</dt>
               {/* El valor va en su propio nodo, sin texto alrededor: es el que
                   se copia, se lee en voz alta y el que animaremos si hace falta. */}
-              <dd className="hero__dato-valor">{lote.clamshell}</dd>
+              <dd className="hero__dato-valor">{lote.codigo}</dd>
             </div>
 
             <div className="hero__dato">
-              <dt className="hero__dato-etiqueta">Lote</dt>
-              <dd className="hero__dato-valor">{lote.codigo}</dd>
+              <dt className="hero__dato-etiqueta">Clamshell</dt>
+              <dd className="hero__dato-valor">{lote.clamshell}</dd>
             </div>
 
             <div className="hero__dato">
@@ -166,16 +144,29 @@ export default function Hero({ lote }) {
 
           {/* Quien recogio el fruto. Es la unica persona con nombre en toda
               la pagina: el resto son plantas, camaras y contenedores. */}
-          <p className="hero__recolector">
-            <IconoPersona />
-            <span className="hero__recolector-texto">
-              <strong className="hero__recolector-nombre">{lote.cosechador.nombre}</strong>
-              <span className="hero__recolector-detalle">
-                Recolectó este lote · {lote.cosechador.cuadrilla} · {lote.cosechador.campanas}{' '}
-                campañas en el fundo
-              </span>
-            </span>
-          </p>
+          <div className="hero__recolector">
+            <img
+              className="hero__recolector-foto"
+              src={rosaHuaman}
+              alt={`Rosa Huamán trabajando en la cosecha de arándanos`}
+              width="628"
+              height="488"
+              loading="lazy"
+              decoding="async"
+            />
+            <div className="hero__recolector-contenido">
+              <p className="hero__recolector-eyebrow">Quién hizo posible este lote</p>
+              <h2 className="hero__recolector-nombre">{lote.cosechador.nombre}</h2>
+              <p className="hero__recolector-descripcion">
+                Rosa trabaja en la cosecha manual de arándanos y forma parte del equipo que cuida
+                cada fruto desde el campo. En este lote participó durante {lote.cosechador.campanas}{' '}
+                campañas.
+              </p>
+              <p className="hero__recolector-detalle">
+                {lote.cosechador.cuadrilla} · {lote.fundo} · Lote {lote.codigo}
+              </p>
+            </div>
+          </div>
 
           <ul className="hero__certs">
             {lote.certificaciones.map((certificacion) => (
@@ -186,7 +177,7 @@ export default function Hero({ lote }) {
           </ul>
 
           <p className="hero__dato-nota">
-            Clamshell y lote van impresos en la etiqueta del envase. El resto sale del registro
+            Lote y clamshell van impresos en la etiqueta del envase. El resto sale del registro
             del lote.
           </p>
         </div>

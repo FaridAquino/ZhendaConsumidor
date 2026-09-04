@@ -31,10 +31,10 @@ export default function Home() {
     <>
       <Hero lote={lote} />
       <Mapa />
-      {/* Cierra #recoleccion: el mapa termina enfocado en Ica y esto es Ica.
-          No lleva nodo en el riel; es el remate del paso 1, no un paso mas. */}
-      <Paisaje />
       <Arandano lote={lote} />
+          {/* El valle vuelve sobre el origen despues del relato del fruto.
+            No lleva nodo en el riel: sigue siendo parte del paso de recoleccion. */}
+        <Paisaje />
       {/* Ultimo paso del riel (#exportacion) y final del relato: el riel
           enciende su tercer nodo con el progreso de la pagina entera, asi que
           esta seccion tiene que ser la ultima del recorrido. Lo que va debajo

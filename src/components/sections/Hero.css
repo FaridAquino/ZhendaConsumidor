@@ -79,7 +79,7 @@
   will-change: transform, opacity;
 }
 
-/* --- Ficha de identidad: clamshell y lote ----------------------------- */
+/* --- Ficha de identidad: lote y clamshell ----------------------------- */
 .hero__identidad {
   width: fit-content;
   /* Con el recolector y las certificaciones dentro, `fit-content` se iria a
@@ -129,7 +129,7 @@
   color: var(--c-berry-800);
 }
 
-/* El clamshell manda: es el numero que la persona tiene delante. */
+/* El lote manda: es la referencia principal del recorrido. */
 .hero__dato--principal .hero__dato-valor {
   font-size: var(--fs-xl);
   font-weight: 600;
@@ -145,10 +145,10 @@
 
 /* --- Quien lo recolecto ----------------------------------------------- */
 .hero__recolector {
-  display: flex;
-  align-items: center;
-  gap: var(--space-3);
-  max-width: none;
+  display: grid;
+  grid-template-columns: minmax(8rem, 13rem) minmax(0, 1fr);
+  gap: var(--space-4);
+  max-width: 34rem;
   /* Separado del resto por una linea: el dato deja de ser un codigo y pasa
      a ser una persona, y el cambio de registro se nota mejor con un corte. */
   margin: var(--space-6) 0 0;
@@ -156,23 +156,47 @@
   border-top: 1px solid var(--c-line);
 }
 
-.hero__recolector-icono {
-  flex: none;
+.hero__recolector-foto {
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  object-fit: cover;
+  border-radius: var(--radius-md);
+}
+
+.hero__recolector-contenido {
+  display: flex;
+  flex-direction: column;
+  font-size: var(--fs-xs);
+  color: var(--text-soft);
+  justify-content: center;
+}
+
+.hero__recolector-eyebrow {
+  margin: 0 0 var(--space-1);
+  font-size: var(--fs-xs);
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
   color: var(--c-leaf-600);
 }
 
-.hero__recolector-texto {
-  display: flex;
-  flex-direction: column;
+.hero__recolector-descripcion {
+  margin: var(--space-2) 0 0;
+  font-size: var(--fs-sm);
+  line-height: 1.5;
+  color: var(--text-soft);
 }
 
 .hero__recolector-nombre {
-  font-size: var(--fs-sm);
+  margin: 0;
+  font-size: var(--fs-lg);
   color: var(--c-berry-800);
 }
 
 .hero__recolector-detalle {
+  margin-top: var(--space-3);
   font-size: var(--fs-xs);
+  font-weight: 600;
   color: var(--text-soft);
 }
 
@@ -203,11 +227,22 @@
   color: var(--text-soft);
 }
 
+/* --- Acciones ---------------------------------------------------------- */
 .hero__acciones {
   display: flex;
   flex-wrap: wrap;
   gap: var(--space-3);
   margin-top: var(--space-8);
+}
+
+@media (max-width: 520px) {
+  .hero__recolector {
+    grid-template-columns: 1fr;
+  }
+
+  .hero__recolector-foto {
+    aspect-ratio: 16 / 9;
+  }
 }
 
 .boton {
