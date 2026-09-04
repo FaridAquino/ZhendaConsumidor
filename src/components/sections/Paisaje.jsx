@@ -2,7 +2,6 @@ import { revealOnScroll } from '../../animations/scroll.js';
 import { useAnimeScope } from '../../hooks/useAnimeScope.js';
 import AccordionGallery from '../ui/AccordionGallery.jsx';
 import { recurso } from '../../recursos.js';
-import BarraSeccion from '../ui/BarraSeccion.jsx';
 import './Paisaje.css';
 
 /*
@@ -59,9 +58,7 @@ export default function Paisaje() {
   });
 
   return (
-    <section className="section paisaje con-barra" ref={root} id="paisaje">
-      {/* Ayuda de depuracion: quitar junto con BarraSeccion. */}
-      <BarraSeccion nombre="Paisaje · #paisaje" color="var(--c-leaf-600)" />
+    <section className="section paisaje" ref={root} id="paisaje">
 
       <div className="container">
         <div className="paisaje__cabecera reveal">

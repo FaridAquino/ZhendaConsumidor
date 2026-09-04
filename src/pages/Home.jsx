@@ -7,7 +7,6 @@ import Empresa from '../components/sections/Empresa.jsx';
 import BuscadorLote from '../components/ui/BuscadorLote.jsx';
 import { LOTES, buscarLote, buscarPorClamshell } from '../data/lotes.js';
 import { useAnimeScope } from '../hooks/useAnimeScope.js';
-import BarraSeccion from '../components/ui/BarraSeccion.jsx';
 import './Home.css';
 
 /*
@@ -46,10 +45,7 @@ export default function Home() {
           existiendo; cuando haya que escribirlos, se vuelven a montar. */}
       <Empresa lote={lote} />
 
-      <section className="section busqueda con-barra" id="buscar" ref={root}>
-        {/* Ayuda de depuracion: quitar junto con BarraSeccion. */}
-        <BarraSeccion nombre="Buscador · #buscar" color="var(--c-ink-soft)" />
-
+      <section className="section busqueda" id="buscar" ref={root}>
         <div className="container busqueda__inner">
           <BuscadorLote />
         </div>

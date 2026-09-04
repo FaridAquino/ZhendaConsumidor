@@ -5,7 +5,6 @@ import { DUR, EASE, RISE, prefersReducedMotion } from '../../animations/motion.j
 import { parallax } from '../../animations/scroll.js';
 import logoZhenda from '../../images/logo_zhenda.png';
 import rosaHuaman from '../../images/rosa_huaman.png';
-import BarraSeccion from '../ui/BarraSeccion.jsx';
 import './Hero.css';
 
 /*
@@ -85,9 +84,7 @@ export default function Hero({ lote }) {
   }, [lote.clamshell]);
 
   return (
-    <section className="hero con-barra" ref={root}>
-      {/* Ayuda de depuracion: quitar junto con BarraSeccion. */}
-      <BarraSeccion nombre="Hero" color="var(--c-berry-800)" />
+    <section className="hero" ref={root}>
 
       {/* Capa decorativa aparte del contenido: si el parallax moviera el
           nodo que envuelve al texto, se llevaria el texto con el. */}

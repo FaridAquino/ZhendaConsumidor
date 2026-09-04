@@ -3,7 +3,6 @@ import { crearSecuencia } from '../../animations/secuencia.js';
 import { useAnimeScope } from '../../hooks/useAnimeScope.js';
 import { prefersReducedMotion } from '../../animations/motion.js';
 import { recurso } from '../../recursos.js';
-import BarraSeccion from '../ui/BarraSeccion.jsx';
 import './Arandano.css';
 
 /*
@@ -411,10 +410,7 @@ export default function Arandano({ lote }) {
   }, [lote.codigo]);
 
   return (
-    <section className="arandano sangrado con-barra" ref={root} id="quimicos">
-      {/* Ayuda de depuracion: quitar junto con BarraSeccion. */}
-      <BarraSeccion nombre="Arándano · #quimicos" color="var(--c-berry-700)" />
-
+    <section className="arandano sangrado" ref={root} id="quimicos">
       <div className="arandano__viewport">
         <div
           className="arandano__lienzo"
